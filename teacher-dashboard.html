@@ -896,88 +896,84 @@
       async function gradeAnswersWithAI() {
         const results = [];
         let totalScore = 0;
-        const promises = [];
 
-        // For each question, evaluate the student's answer using Gemini API
-        for (let i = 0; i < teacherQuestions.length; i++) {
-          const question = teacherQuestions[i];
+        // Create an array of promises for each question
+        const promises = teacherQuestions.map(async (question, i) => {
           const correctAnswer = teacherAnswers[i]?.text || "";
-
-          // Find the student's answer for this question
           const studentAnswer = studentAnswers.find(
             (a) => a.number === question.number
           );
           const answer = studentAnswer?.text || "No answer provided";
 
-          // Create prompt for Gemini
           const prompt = `
-You are an educational grading AI. Grade the student's answer based on accuracy of facts dont focus on creativity of answer also (((the language of the feedback will be similar to language of question and answer))).
+      You are an educational grading AI. Grade the student's answer based on accuracy of facts dont focus on creativity of answer also (((the language of the feedback will be similar to language of question and answer))).
+      
+      Question: "${question.text}"
+      Correct answer: "${correctAnswer}"
+      Student's answer: "${answer}"
+      
+      Rate the answer on a scale of 0-100:
+      - 90-100: Excellent (fully correct)
+      - 70-89: Good (mostly correct with minor issues)
+      - 50-69: Acceptable (partially correct)
+      - 30-49: Poor (mostly incorrect)
+      - 0-29: Very poor (completely incorrect)
+      
+      IMPORTANT: Return ONLY a valid JSON object as follows:
+      {
+        "score": "A number between 0-100",
+        "feedback": "Your feedback here"
+      }
+      
+      DO NOT include any text before or after the JSON. DO NOT use code blocks, markdown formatting, or backticks.
+      `;
 
-Question: "${question.text}"
-Correct answer: "${correctAnswer}"
-Student's answer: "${answer}"
-
-Rate the answer on a scale of 0-100:
-- 90-100: Excellent (fully correct)
-- 70-89: Good (mostly correct with minor issues)
-- 50-69: Acceptable (partially correct)
-- 30-49: Poor (mostly incorrect)
-- 0-29: Very poor (completely incorrect)
-
-IMPORTANT: Return ONLY a valid JSON object as follows:
-{
-  "score": "A number between 0-100",
-  "feedback": "Your feedback here"
-}back
-
-DO NOT include any text before or after the JSON. DO NOT use code blocks, markdown formatting, or backticks.
-`;
-
-          // Create promise for API call
-          const promise = callGeminiAPI(prompt)
-            .then((response) => {
-              try {
-                const result = JSON.parse(response.trim());
-
-                results.push({
-                  questionNumber: question.number,
-                  question: question.text,
-                  studentAnswer: answer,
-                  correctAnswer,
-                  score: result.score,
-                  feedback: result.feedback,
-                });
-
-                totalScore += result.score;
-              } catch (e) {
-                console.error("Error parsing Gemini response:", e, response);
-                results.push({
-                  questionNumber: question.number,
-                  question: question.text,
-                  studentAnswer: answer,
-                  correctAnswer,
-                  score: 0,
-                  feedback: "Error processing this answer. Please try again.",
-                });
-              }
-            })
-            .catch((error) => {
-              console.error("API call failed:", error);
-              results.push({
-                questionNumber: question.number,
-                question: question.text,
-                studentAnswer: answer,
-                correctAnswer,
+          try {
+            const response = await callGeminiAPI(prompt);
+            let result;
+            try {
+              result = JSON.parse(response.trim());
+            } catch (e) {
+              console.error("Error parsing Gemini response:", e, response);
+              result = {
                 score: 0,
-                feedback: "Error: Unable to grade this answer.",
-              });
-            });
+                feedback: "Error processing this answer. Please try again.",
+              };
+            }
 
-          promises.push(promise);
-        }
+            const score = parseInt(result.score) || 0; // Ensure score is a number
+            totalScore += score; // Accumulate score
 
-        // Wait for all API calls to complete
-        await Promise.all(promises);
+            return {
+              questionNumber: question.number,
+              question: question.text,
+              studentAnswer: answer,
+              correctAnswer,
+              score,
+              feedback: result.feedback,
+            };
+          } catch (error) {
+            console.error(
+              "API call failed for question",
+              question.number,
+              error
+            );
+            return {
+              questionNumber: question.number,
+              question: question.text,
+              studentAnswer: answer,
+              correctAnswer,
+              score: 0,
+              feedback: "Error: Unable to grade this answer.",
+            };
+          }
+        });
+
+        // Wait for all promises to resolve
+        const resolvedResults = await Promise.all(promises);
+
+        // Add resolved results to the results array
+        results.push(...resolvedResults);
 
         // Sort results by question number
         results.sort((a, b) => a.questionNumber - b.questionNumber);
@@ -1092,7 +1088,7 @@ DO NOT include any text before or after the JSON. DO NOT use code blocks, markdo
             <h3>Overall Score</h3>
             <p>Graded at: ${gradingResults.gradedAt}</p>
           </div>
-          <div classclass="score high-score">
+          <div class="score high-score">
             ${Math.round(gradingResults.overallScore)}
           </div>
         </div>
