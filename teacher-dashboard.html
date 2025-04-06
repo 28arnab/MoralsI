@@ -1,805 +1,1189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Grading System</title>
-  <style>
-    :root {
-      --primary-color: #4285F4;
-      --secondary-color: #34A853;
-      --tertiary-color: #FBBC05;
-      --quaternary-color: #EA4335;
-      --light-gray: #f8f9fa;
-      --border-color: #dadce0;
-      --text-color: #202124;
-      --shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Morals - AI-Powered Educational Platform</title>
+    <style>
+      :root {
+        --primary-color: #4285f4;
+        --secondary-color: #34a853;
+        --tertiary-color: #fbbc05;
+        --quaternary-color: #ea4335;
+        --light-gray: #f8f9fa;
+        --border-color: #dadce0;
+        --text-color: #202124;
+        --shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
+          0 1px 3px 1px rgba(60, 64, 67, 0.15);
+      }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Google Sans', Arial, sans-serif;
-    }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Google Sans", Arial, sans-serif;
+      }
 
-    body {
-      background-color: #fff;
-      color: var(--text-color);
-      line-height: 1.6;
-    }
+      body {
+        background-color: #fff;
+        color: var(--text-color);
+        line-height: 1.6;
+      }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 24px;
-      justify-content: space-between;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-    }
-
-    .logo h1 {
-      font-size: 24px;
-      font-weight: 500;
-      margin-left: 12px;
-    }
-
-    .logo-icon {
-      font-size: 24px;
-      color: var(--primary-color);
-    }
-
-    .tab-container {
-      display: flex;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .tab {
-      padding: 12px 16px;
-      margin-right: 8px;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      font-weight: 500;
-      color: #5f6368;
-      transition: all 0.3s;
-    }
-
-    .tab.active {
-      color: var(--primary-color);
-      border-bottom: 3px solid var(--primary-color);
-    }
-
-    .tab:hover:not(.active) {
-      color: var(--text-color);
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .tab-content {
-      display: none;
-      animation: fadeIn 0.5s;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .card {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-
-    h2 {
-      color: var(--text-color);
-      font-weight: 500;
-      margin-bottom: 16px;
-      font-size: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 14px;
-      color: #5f6368;
-    }
-
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      resize: vertical;
-      min-height: 150px;
-      font-size: 14px;
-      transition: border 0.3s;
-    }
-
-    textarea:focus {
-      outline: none;
-      border-color: var(--primary-color);
-    }
-
-    .button {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: background 0.3s;
-    }
-
-    .button:hover {
-      background-color: #3367d6;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-    }
-
-    .button.secondary {
-      background-color: white;
-      color: var(--primary-color);
-      border: 1px solid var(--primary-color);
-    }
-
-    .button.secondary:hover {
-      background-color: rgba(66, 133, 244, 0.04);
-    }
-
-    .info-text {
-      font-size: 14px;
-      color: #5f6368;
-      margin: 16px 0;
-    }
-
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .result-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      background-color: var(--light-gray);
-      transition: all 0.3s;
-    }
-
-    .result-card:hover {
-      box-shadow: var(--shadow);
-    }
-
-    .score {
-      font-size: 24px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      color: white;
-    }
-
-    .high-score {
-      background-color: var(--secondary-color);
-    }
-
-    .medium-score {
-      background-color: var(--tertiary-color);
-    }
-
-    .low-score {
-      background-color: var(--quaternary-color);
-    }
-
-    .feedback {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #5f6368;
-    }
-
-    .score-details {
-      flex: 1;
-      margin-left: 16px;
-    }
-
-    .loader {
-      display: none;
-      text-align: center;
-      padding: 24px;
-    }
-
-    .spinner {
-      border: 4px solid rgba(0, 0, 0, 0.1);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border-left-color: var(--primary-color);
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .tooltip {
-      position: relative;
-      display: inline-block;
-      margin-left: 8px;
-      color: #5f6368;
-    }
-
-    .tooltip .tooltiptext {
-      visibility: hidden;
-      width: 240px;
-      background-color: #616161;
-      color: #fff;
-      text-align: center;
-      border-radius: 6px;
-      padding: 8px;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 12px;
-    }
-
-    .tooltip:hover .tooltiptext {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .error {
-      color: var(--quaternary-color);
-      font-size: 14px;
-      margin-top: 8px;
-    }
-
-    .grading-message {
-      text-align: center;
-      margin: 24px 0;
-      font-size: 18px;
-      color: var(--primary-color);
-    }
-
-    .progress-container {
-      width: 100%;
-      height: 4px;
-      background-color: #e0e0e0;
-      margin-bottom: 24px;
-      border-radius: 4px;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background-color: var(--primary-color);
-      border-radius: 4px;
-      width: 0%;
-      transition: width 0.5s ease;
-    }
-
-    .question-list {
-      margin-top: 16px;
-    }
-
-    .question-item {
-      padding: 12px;
-      border-radius: 4px;
-      border: 1px solid var(--border-color);
-      margin-bottom: 8px;
-      background-color: var(--light-gray);
-    }
-
-    .help-text {
-      display: block;
-      font-size: 12px;
-      color: #5f6368;
-      margin-top: 4px;
-    }
-
-    .light-card {
-      background-color: var(--light-gray);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    @media (max-width: 768px) {
       .container {
-        padding: 16px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
       }
-      
-      .card {
-        padding: 16px;
+
+      header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+        justify-content: space-between;
       }
-      
-      .actions {
-        flex-direction: column;
+
+      .logo {
+        display: flex;
+        align-items: center;
       }
-      
-      .button {
-        width: 100%;
+
+      .logo h1 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-left: 12px;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <div class="logo">
-        <span class="logo-icon">📝</span>
-        <h1>Smart Grading System</h1>
-      </div>
-    </header>
 
-    <div class="tab-container">
-      <div class="tab active" data-tab="setup">Setup</div>
-      <div class="tab" data-tab="student">Student Submission</div>
-      <div class="tab" data-tab="results">Results</div>
-    </div>
-
-    <div id="setup" class="tab-content active">
-      <div class="card">
-        <h2>Teacher Setup</h2>
-        <p class="info-text">Input questions and their corresponding answers. Each question and answer should be on a new line and numbered sequentially (1, 2, 3, etc.).</p>
-        
-        <label for="questions">Questions <span class="tooltip">ℹ️<span class="tooltiptext">Each question should start with a number followed by a period or parenthesis, e.g., "1. What is..." or "1) What is..."</span></span></label>
-        <textarea id="questions" placeholder="1. What is the capital of France?&#10;2. Who wrote Romeo and Juliet?&#10;3. What is the chemical symbol for water?"></textarea>
-        
-        <label for="answers">Correct Answers <span class="tooltip">ℹ️<span class="tooltiptext">Each answer should correspond to the question with the same number.</span></span></label>
-        <textarea id="answers" placeholder="1. Paris&#10;2. William Shakespeare&#10;3. H2O"></textarea>
-        
-        <div class="actions">
-          <button id="clear-setup" class="button secondary">Clear</button>
-          <button id="save-setup" class="button">Save Setup</button>
-        </div>
-      </div>
-
-      <div id="question-preview" class="card" style="display:none;">
-        <h2>Question Preview</h2>
-        <div class="question-list" id="question-list-preview">
-          <!-- Questions will be displayed here -->
-        </div>
-      </div>
-    </div>
-
-    <div id="student" class="tab-content">
-      <div class="card">
-        <h2>Student Submission</h2>
-        <p class="info-text">Answer the questions below. Make sure to number your answers to match the questions (1, 2, 3, etc.).</p>
-        
-        <div id="questions-display" class="light-card">
-          <p class="info-text">No questions have been set up yet. Please go to the Setup tab first.</p>
-        </div>
-        
-        <label for="student-answers">Your Answers <span class="tooltip">ℹ️<span class="tooltiptext">Number your answers to match the questions (1, 2, 3, etc.)</span></span></label>
-        <textarea id="student-answers" placeholder="1. Paris&#10;2. William Shakespeare&#10;3. H2O"></textarea>
-        
-        <div class="actions">
-          <button id="clear-student" class="button secondary">Clear</button>
-          <button id="submit-answers" class="button">Submit Answers</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="results" class="tab-content">
-      <div class="card">
-        <h2>Grading Results</h2>
-        <p class="info-text">View the grading results and feedback for submitted answers.</p>
-        
-        <div id="results-container">
-          <p class="info-text">No results available yet. Submit answers in the Student Submission tab first.</p>
-        </div>
-      </div>
-    </div>
-
-    <div id="loader" class="loader">
-      <div class="progress-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
-      <p class="grading-message">Grading in progress...</p>
-      <div class="spinner"></div>
-    </div>
-  </div>
-
-  <script>
-    // Global variables to store questions and answers
-    let teacherQuestions = [];
-    let teacherAnswers = [];
-    let studentAnswers = [];
-    let gradingResults = null;
-
-    // DOM elements
-    const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
-    const questionsInput = document.getElementById('questions');
-    const answersInput = document.getElementById('answers');
-    const studentAnswersInput = document.getElementById('student-answers');
-    const saveSetupBtn = document.getElementById('save-setup');
-    const clearSetupBtn = document.getElementById('clear-setup');
-    const clearStudentBtn = document.getElementById('clear-student');
-    const submitAnswersBtn = document.getElementById('submit-answers');
-    const questionsDisplay = document.getElementById('questions-display');
-    const resultsContainer = document.getElementById('results-container');
-    const loader = document.getElementById('loader');
-    const progressBar = document.getElementById('progress-bar');
-    const questionPreview = document.getElementById('question-preview');
-    const questionListPreview = document.getElementById('question-list-preview');
-
-    // Tab switching functionality
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        // Remove active class from all tabs and contents
-        tabs.forEach(t => t.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
-        
-        // Add active class to clicked tab and corresponding content
-        tab.classList.add('active');
-        const tabId = tab.getAttribute('data-tab');
-        document.getElementById(tabId).classList.add('active');
-      });
-    });
-
-    // Save setup
-    saveSetupBtn.addEventListener('click', () => {
-      const questions = questionsInput.value.trim();
-      const answers = answersInput.value.trim();
-      
-      if (!questions || !answers) {
-        alert('Please enter both questions and answers.');
-        return;
+      .logo-icon {
+        font-size: 24px;
+        color: var(--primary-color);
       }
-      
-      // Parse questions and answers
-      teacherQuestions = parseNumberedItems(questions);
-      teacherAnswers = parseNumberedItems(answers);
-      
-      // Validate that we have matching questions and answers
-      if (teacherQuestions.length !== teacherAnswers.length) {
-        alert('The number of questions and answers must match. Please check your input.');
-        return;
-      }
-      
-      if (teacherQuestions.length === 0) {
-        alert('Could not parse any questions. Make sure they are numbered (e.g., "1. Question").');
-        return;
-      }
-      
-      // Display questions for students
-      displayQuestionsForStudents();
-      
-      // Show preview
-      displayQuestionPreview();
-      
-      // Switch to student tab
-      tabs[1].click();
-      
-      // Alert success
-      alert(`Setup complete! ${teacherQuestions.length} questions and answers have been saved.`);
-    });
 
-    // Parse numbered items (questions or answers)
-    function parseNumberedItems(text) {
-      const lines = text.split('\n');
-      const items = [];
-      let currentItem = '';
-      let currentNumber = null;
-      
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line) continue;
-        
-        // Check if this line starts with a number
-        const match = line.match(/^(\d+)[\.\)]?\s+(.+)$/);
-        
-        if (match) {
-          // If we already have an item in progress, save it first
-          if (currentNumber !== null && currentItem) {
-            items.push({ number: currentNumber, text: currentItem.trim() });
-          }
-          
-          // Start a new item
-          currentNumber = parseInt(match[1]);
-          currentItem = match[2];
-        } else if (currentNumber !== null) {
-          // This line is a continuation of the previous item
-          currentItem += ' ' + line;
+      .tab-container {
+        display: flex;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .tab {
+        padding: 12px 16px;
+        margin-right: 8px;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        font-weight: 500;
+        color: #5f6368;
+        transition: all 0.3s;
+      }
+
+      .tab.active {
+        color: var(--primary-color);
+        border-bottom: 3px solid var(--primary-color);
+      }
+
+      .tab:hover:not(.active) {
+        color: var(--text-color);
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .tab-content {
+        display: none;
+        animation: fadeIn 0.5s;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
         }
       }
-      
-      // Don't forget to add the last item
-      if (currentNumber !== null && currentItem) {
-        items.push({ number: currentNumber, text: currentItem.trim() });
-      }
-      
-      // Sort by question number
-      items.sort((a, b) => a.number - b.number);
-      
-      return items;
-    }
 
-    // Display questions for student view
-    function displayQuestionsForStudents() {
-      if (teacherQuestions.length === 0) {
-        questionsDisplay.innerHTML = `<p class="info-text">No questions have been set up yet. Please go to the Setup tab first.</p>`;
-        return;
+      .card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        padding: 24px;
+        margin-bottom: 24px;
       }
-      
-      let html = '<h3>Questions:</h3>';
-      
-      teacherQuestions.forEach(question => {
-        html += `<div class="question-item">${question.number}. ${question.text}</div>`;
+
+      h2 {
+        color: var(--text-color);
+        font-weight: 500;
+        margin-bottom: 16px;
+        font-size: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #5f6368;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        resize: vertical;
+        min-height: 150px;
+        font-size: 14px;
+        transition: border 0.3s;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.3s;
+      }
+
+      .button:hover {
+        background-color: #3367d6;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      }
+
+      .button.secondary {
+        background-color: white;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+      }
+
+      .button.secondary:hover {
+        background-color: rgba(66, 133, 244, 0.04);
+      }
+
+      .info-text {
+        font-size: 14px;
+        color: #5f6368;
+        margin: 16px 0;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .result-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        background-color: var(--light-gray);
+        transition: all 0.3s;
+      }
+
+      .result-card:hover {
+        box-shadow: var(--shadow);
+      }
+
+      .score {
+        font-size: 24px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        color: white;
+      }
+
+      .high-score {
+        background-color: var(--secondary-color);
+      }
+
+      .medium-score {
+        background-color: var(--tertiary-color);
+      }
+
+      .low-score {
+        background-color: var(--quaternary-color);
+      }
+
+      .feedback {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #5f6368;
+      }
+
+      .score-details {
+        flex: 1;
+        margin-left: 16px;
+      }
+
+      .loader {
+        display: none;
+        text-align: center;
+        padding: 24px;
+      }
+
+      .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border-left-color: var(--primary-color);
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        margin-left: 8px;
+        color: #5f6368;
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 240px;
+        background-color: #616161;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .error {
+        color: var(--quaternary-color);
+        font-size: 14px;
+        margin-top: 8px;
+      }
+
+      .grading-message {
+        text-align: center;
+        margin: 24px 0;
+        font-size: 18px;
+        color: var(--primary-color);
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 4px;
+        background-color: #e0e0e0;
+        margin-bottom: 24px;
+        border-radius: 4px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background-color: var(--primary-color);
+        border-radius: 4px;
+        width: 0%;
+        transition: width 0.5s ease;
+      }
+
+      .question-list {
+        margin-top: 16px;
+      }
+
+      .question-item {
+        padding: 12px;
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 8px;
+        background-color: var(--light-gray);
+      }
+
+      .help-text {
+        display: block;
+        font-size: 12px;
+        color: #5f6368;
+        margin-top: 4px;
+      }
+
+      .light-card {
+        background-color: var(--light-gray);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .api-settings {
+        margin-top: 24px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 24px;
+      }
+
+      .input-group {
+        margin-bottom: 16px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .slider-container input {
+        flex: 1;
+      }
+
+      .slider-value {
+        width: 60px;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+
+        .card {
+          padding: 16px;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        .button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">
+          <span class="logo-icon">📝</span>
+          <h1>Smart Grading System</h1>
+        </div>
+      </header>
+
+      <div class="tab-container">
+        <div class="tab active" data-tab="setup">Setup</div>
+        <div class="tab" data-tab="student">Student Submission</div>
+        <div class="tab" data-tab="results">Results</div>
+        <div class="tab" data-tab="settings">API Settings</div>
+      </div>
+
+      <div id="setup" class="tab-content active">
+        <div class="card">
+          <h2>Teacher Setup</h2>
+          <p class="info-text">
+            Input questions and their corresponding answers. Each question and
+            answer should be on a new line and numbered sequentially (1, 2, 3,
+            etc.).
+          </p>
+
+          <label for="questions"
+            >Questions
+            <span class="tooltip"
+              >ℹ️<span class="tooltiptext"
+                >Each question should start with a number followed by a period
+                or parenthesis, e.g., "1. What is..." or "1) What is..."</span
+              ></span
+            ></label
+          >
+          <textarea
+            id="questions"
+            placeholder="1. What is the capital of France?&#10;2. Who wrote Romeo and Juliet?&#10;3. What is the chemical symbol for water?"
+          ></textarea>
+
+          <label for="answers"
+            >Correct Answers
+            <span class="tooltip"
+              >ℹ️<span class="tooltiptext"
+                >Each answer should correspond to the question with the same
+                number.</span
+              ></span
+            ></label
+          >
+          <textarea
+            id="answers"
+            placeholder="1. Paris&#10;2. William Shakespeare&#10;3. H2O"
+          ></textarea>
+
+          <div class="actions">
+            <button id="clear-setup" class="button secondary">Clear</button>
+            <button id="save-setup" class="button">Save Setup</button>
+          </div>
+        </div>
+
+        <div id="question-preview" class="card" style="display: none">
+          <h2>Question Preview</h2>
+          <div class="question-list" id="question-list-preview">
+            <!-- Questions will be displayed here -->
+          </div>
+        </div>
+      </div>
+
+      <div id="student" class="tab-content">
+        <div class="card">
+          <h2>Student Submission</h2>
+          <p class="info-text">
+            Answer the questions below. Make sure to number your answers to
+            match the questions (1, 2, 3, etc.).
+          </p>
+
+          <div id="questions-display" class="light-card">
+            <p class="info-text">
+              No questions have been set up yet. Please go to the Setup tab
+              first.
+            </p>
+          </div>
+
+          <label for="student-answers"
+            >Your Answers
+            <span class="tooltip"
+              >ℹ️<span class="tooltiptext"
+                >Number your answers to match the questions (1, 2, 3,
+                etc.)</span
+              ></span
+            ></label
+          >
+          <textarea
+            id="student-answers"
+            placeholder="1. Paris&#10;2. William Shakespeare&#10;3. H2O"
+          ></textarea>
+
+          <div class="actions">
+            <button id="clear-student" class="button secondary">Clear</button>
+            <button id="submit-answers" class="button">Submit Answers</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="results" class="tab-content">
+        <div class="card">
+          <h2>Grading Results</h2>
+          <p class="info-text">
+            View the grading results and feedback for submitted answers.
+          </p>
+
+          <div id="results-container">
+            <p class="info-text">
+              No results available yet. Submit answers in the Student Submission
+              tab first.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="settings" class="tab-content">
+        <div class="card">
+          <h2>API Settings</h2>
+          <p class="info-text">
+            Configure the Gemini API settings for accurate grading.
+          </p>
+
+          <div class="input-group">
+            <label for="api-key"
+              >Gemini API Key
+              <span class="tooltip"
+                >ℹ️<span class="tooltiptext"
+                  >Your Gemini API key from Google AI Studio</span
+                ></span
+              ></label
+            >
+            <input
+              type="text"
+              id="api-key"
+              placeholder="Enter your Gemini API key"
+            />
+          </div>
+
+          <div class="input-group">
+            <label
+              >Temperature
+              <span class="tooltip"
+                >ℹ️<span class="tooltiptext"
+                  >Controls randomness: Lower values are more focused, higher
+                  values more creative</span
+                ></span
+              ></label
+            >
+            <div class="slider-container">
+              <input
+                type="range"
+                id="temperature"
+                min="0"
+                max="1"
+                step="0.1"
+                value="0.7"
+              />
+              <span class="slider-value" id="temperature-value">0.7</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label
+              >Max Output Tokens
+              <span class="tooltip"
+                >ℹ️<span class="tooltiptext"
+                  >Controls the maximum length of the response</span
+                ></span
+              ></label
+            >
+            <div class="slider-container">
+              <input
+                type="range"
+                id="max-tokens"
+                min="256"
+                max="8192"
+                step="256"
+                value="2048"
+              />
+              <span class="slider-value" id="max-tokens-value">2048</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="save-settings" class="button">Save Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="loader" class="loader">
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <p class="grading-message">Grading in progress using AI...</p>
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <script>
+      // Global variables to store questions and answers
+      let teacherQuestions = [];
+      let teacherAnswers = [];
+      let studentAnswers = [];
+      let gradingResults = null;
+
+      // API settings with defaults
+      let apiSettings = {
+        apiKey: "",
+        temperature: 0.7,
+        maxOutputTokens: 2048,
+      };
+
+      // Check if API settings are stored in localStorage
+      if (localStorage.getItem("apiSettings")) {
+        try {
+          apiSettings = JSON.parse(localStorage.getItem("apiSettings"));
+          document.getElementById("api-key").value = apiSettings.apiKey || "";
+          document.getElementById("temperature").value =
+            apiSettings.temperature || 0.7;
+          document.getElementById("temperature-value").textContent =
+            apiSettings.temperature || 0.7;
+          document.getElementById("max-tokens").value =
+            apiSettings.maxOutputTokens || 2048;
+          document.getElementById("max-tokens-value").textContent =
+            apiSettings.maxOutputTokens || 2048;
+        } catch (e) {
+          console.error("Error loading API settings:", e);
+        }
+      }
+
+      // DOM elements
+      const tabs = document.querySelectorAll(".tab");
+      const tabContents = document.querySelectorAll(".tab-content");
+      const questionsInput = document.getElementById("questions");
+      const answersInput = document.getElementById("answers");
+      const studentAnswersInput = document.getElementById("student-answers");
+      const saveSetupBtn = document.getElementById("save-setup");
+      const clearSetupBtn = document.getElementById("clear-setup");
+      const clearStudentBtn = document.getElementById("clear-student");
+      const submitAnswersBtn = document.getElementById("submit-answers");
+      const questionsDisplay = document.getElementById("questions-display");
+      const resultsContainer = document.getElementById("results-container");
+      const loader = document.getElementById("loader");
+      const progressBar = document.getElementById("progress-bar");
+      const questionPreview = document.getElementById("question-preview");
+      const questionListPreview = document.getElementById(
+        "question-list-preview"
+      );
+      const saveSettingsBtn = document.getElementById("save-settings");
+      const temperatureSlider = document.getElementById("temperature");
+      const temperatureValue = document.getElementById("temperature-value");
+      const maxTokensSlider = document.getElementById("max-tokens");
+      const maxTokensValue = document.getElementById("max-tokens-value");
+
+      // Update temperature value display when slider changes
+      temperatureSlider.addEventListener("input", function () {
+        temperatureValue.textContent = this.value;
       });
-      
-      questionsDisplay.innerHTML = html;
-    }
 
-    // Display question preview
-    function displayQuestionPreview() {
-      if (teacherQuestions.length === 0) {
-        questionPreview.style.display = 'none';
-        return;
+      // Update max tokens value display when slider changes
+      maxTokensSlider.addEventListener("input", function () {
+        maxTokensValue.textContent = this.value;
+      });
+
+      // Save API settings
+      saveSettingsBtn.addEventListener("click", function () {
+        apiSettings.apiKey = document.getElementById("api-key").value;
+        apiSettings.temperature = parseFloat(temperatureSlider.value);
+        apiSettings.maxOutputTokens = parseInt(maxTokensSlider.value);
+
+        localStorage.setItem("apiSettings", JSON.stringify(apiSettings));
+
+        alert("API settings saved successfully!");
+      });
+
+      // Tab switching functionality
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          // Remove active class from all tabs and contents
+          tabs.forEach((t) => t.classList.remove("active"));
+          tabContents.forEach((content) => content.classList.remove("active"));
+
+          // Add active class to clicked tab and corresponding content
+          tab.classList.add("active");
+          const tabId = tab.getAttribute("data-tab");
+          document.getElementById(tabId).classList.add("active");
+        });
+      });
+
+      // Save setup
+      saveSetupBtn.addEventListener("click", () => {
+        const questions = questionsInput.value.trim();
+        const answers = answersInput.value.trim();
+
+        if (!questions || !answers) {
+          alert("Please enter both questions and answers.");
+          return;
+        }
+
+        // Parse questions and answers
+        teacherQuestions = parseNumberedItems(questions);
+        teacherAnswers = parseNumberedItems(answers);
+
+        // Validate that we have matching questions and answers
+        if (teacherQuestions.length !== teacherAnswers.length) {
+          alert(
+            "The number of questions and answers must match. Please check your input."
+          );
+          return;
+        }
+
+        if (teacherQuestions.length === 0) {
+          alert(
+            'Could not parse any questions. Make sure they are numbered (e.g., "1. Question").'
+          );
+          return;
+        }
+
+        // Save to localStorage
+        localStorage.setItem(
+          "teacherQuestions",
+          JSON.stringify(teacherQuestions)
+        );
+        localStorage.setItem("teacherAnswers", JSON.stringify(teacherAnswers));
+
+        // Display questions for students
+        displayQuestionsForStudents();
+
+        // Show preview
+        displayQuestionPreview();
+
+        // Switch to student tab
+        tabs[1].click();
+
+        // Alert success
+        alert(
+          `Setup complete! ${teacherQuestions.length} questions and answers have been saved.`
+        );
+      });
+
+      // Parse numbered items (questions or answers)
+      function parseNumberedItems(text) {
+        const lines = text.split("\n");
+        const items = [];
+        let currentItem = "";
+        let currentNumber = null;
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+
+          // Check if this line starts with a number
+          const match = line.match(/^(\d+)[\.\)]?\s+(.+)$/);
+
+          if (match) {
+            // If we already have an item in progress, save it first
+            if (currentNumber !== null && currentItem) {
+              items.push({ number: currentNumber, text: currentItem.trim() });
+            }
+
+            // Start a new item
+            currentNumber = parseInt(match[1]);
+            currentItem = match[2];
+          } else if (currentNumber !== null) {
+            // This line is a continuation of the previous item
+            currentItem += " " + line;
+          }
+        }
+
+        // Don't forget to add the last item
+        if (currentNumber !== null && currentItem) {
+          items.push({ number: currentNumber, text: currentItem.trim() });
+        }
+
+        // Sort by question number
+        items.sort((a, b) => a.number - b.number);
+
+        return items;
       }
-      
-      let html = '';
-      
-      for (let i = 0; i < teacherQuestions.length; i++) {
-        const question = teacherQuestions[i];
-        const answer = teacherAnswers[i] || { text: 'No answer provided' };
-        
-        html += `
+
+      // Display questions for student view
+      function displayQuestionsForStudents() {
+        if (teacherQuestions.length === 0) {
+          questionsDisplay.innerHTML = `<p class="info-text">No questions have been set up yet. Please go to the Setup tab first.</p>`;
+          return;
+        }
+
+        let html = "<h3>Questions:</h3>";
+
+        teacherQuestions.forEach((question) => {
+          html += `<div class="question-item">${question.number}. ${question.text}</div>`;
+        });
+
+        questionsDisplay.innerHTML = html;
+      }
+
+      // Display question preview
+      function displayQuestionPreview() {
+        if (teacherQuestions.length === 0) {
+          questionPreview.style.display = "none";
+          return;
+        }
+
+        let html = "";
+
+        for (let i = 0; i < teacherQuestions.length; i++) {
+          const question = teacherQuestions[i];
+          const answer = teacherAnswers[i] || { text: "No answer provided" };
+
+          html += `
           <div class="question-item">
             <strong>Q${question.number}:</strong> ${question.text}
             <span class="help-text"><strong>Answer:</strong> ${answer.text}</span>
           </div>
         `;
-      }
-      
-      questionListPreview.innerHTML = html;
-      questionPreview.style.display = 'block';
-    }
+        }
 
-    // Submit student answers
-    submitAnswersBtn.addEventListener('click', async () => {
-      const answersText = studentAnswersInput.value.trim();
-      
-      if (!answersText) {
-        alert('Please enter your answers before submitting.');
-        return;
+        questionListPreview.innerHTML = html;
+        questionPreview.style.display = "block";
       }
-      
-      if (teacherQuestions.length === 0 || teacherAnswers.length === 0) {
-        alert('No questions or reference answers are set up. Please complete the teacher setup first.');
-        return;
-      }
-      
-      // Parse student answers
-      studentAnswers = parseNumberedItems(answersText);
-      
-      // Show loader
-      loader.style.display = 'block';
-      animateProgressBar();
-      
-      // Switch to results tab
-      tabs[2].click();
-      
-      try {
-        // Grade the answers
-        await gradeAnswers();
-        
-        // Display results
-        displayResults();
-      } catch (error) {
-        console.error('Grading error:', error);
-        resultsContainer.innerHTML = `
+
+      // Submit student answers
+      submitAnswersBtn.addEventListener("click", async () => {
+        const answersText = studentAnswersInput.value.trim();
+
+        if (!answersText) {
+          alert("Please enter your answers before submitting.");
+          return;
+        }
+
+        if (teacherQuestions.length === 0 || teacherAnswers.length === 0) {
+          alert(
+            "No questions or reference answers are set up. Please complete the teacher setup first."
+          );
+          return;
+        }
+
+        if (!apiSettings.apiKey) {
+          alert(
+            "Please set your Gemini API key in the API Settings tab before grading."
+          );
+          tabs[3].click(); // Switch to settings tab
+          return;
+        }
+
+        // Parse student answers
+        studentAnswers = parseNumberedItems(answersText);
+
+        // Show loader
+        loader.style.display = "block";
+        animateProgressBar();
+
+        // Switch to results tab
+        tabs[2].click();
+
+        try {
+          // Grade the answers using Gemini API
+          await gradeAnswersWithAI();
+
+          // Display results
+          displayResults();
+        } catch (error) {
+          console.error("Grading error:", error);
+          resultsContainer.innerHTML = `
           <div class="error">
-            <p>An error occurred while grading. Please try again.</p>
+            <p>An error occurred while grading. Please check your API key and try again.</p>
             <p>Error details: ${error.message}</p>
           </div>
         `;
-      } finally {
-        // Hide loader
-        loader.style.display = 'none';
-      }
-    });
-
-    // Animate progress bar
-    function animateProgressBar() {
-      let width = 0;
-      const interval = setInterval(() => {
-        if (width >= 95) {
-          clearInterval(interval);
-        } else {
-          width += Math.random() * 5;
-          progressBar.style.width = width + '%';
+        } finally {
+          // Hide loader
+          loader.style.display = "none";
         }
-      }, 200);
-      
-      // Set a timeout to ensure progress completes
-      setTimeout(() => {
-        clearInterval(interval);
-        progressBar.style.width = '100%';
-      }, 10000);
-    }
+      });
 
-    // Grade answers (mock AI evaluation for demonstration)
-    async function gradeAnswers() {
-      // In a real implementation, this would call the Gemini API
-      // For this demo, we'll simulate the grading process
-      
-      return new Promise(resolve => {
-        setTimeout(() => {
-          const results = [];
-          let totalScore = 0;
-          
-          // For each question, evaluate the student's answer
-          for (let i = 0; i < teacherQuestions.length; i++) {
-            const question = teacherQuestions[i];
-            const correctAnswer = teacherAnswers[i]?.text || '';
-            
-            // Find the student's answer for this question
-            const studentAnswer = studentAnswers.find(a => a.number === question.number);
-            const answer = studentAnswer?.text || 'No answer provided';
-            
-            // Calculate similarity score (demo version)
-            let score = calculateSimilarity(answer, correctAnswer);
-            totalScore += score;
-            
-            // Generate feedback
-            let feedback = '';
-            if (score >= 90) {
-              feedback = 'Excellent! Your answer is correct.';
-            } else if (score >= 70) {
-              feedback = 'Good answer, but there\'s room for improvement.';
-            } else if (score >= 50) {
-              feedback = 'Partially correct. Review the material again.';
-            } else {
-              feedback = 'Incorrect. Please study this topic more.';
-            }
-            
-            results.push({
-              questionNumber: question.number,
-              question: question.text,
-              studentAnswer: answer,
-              correctAnswer,
-              score,
-              feedback
-            });
+      // Animate progress bar
+      function animateProgressBar() {
+        let width = 0;
+        const interval = setInterval(() => {
+          if (width >= 95) {
+            clearInterval(interval);
+          } else {
+            width += Math.random() * 5;
+            progressBar.style.width = width + "%";
           }
-          
-          // Calculate overall score
-          const overallScore = results.length > 0 ? totalScore / results.length : 0;
-          
-          gradingResults = {
-            results,
-            overallScore,
-            gradedAt: new Date().toLocaleString()
-          };
-          
-          resolve(gradingResults);
-        }, 3000); // Simulated delay
-      });
-    }
+        }, 200);
 
-    // Simple function to calculate text similarity (for demo purposes)
-    function calculateSimilarity(text1, text2) {
-      if (!text1 || !text2) return 0;
-      
-      // Normalize texts
-      const a = text1.toLowerCase().trim();
-      const b = text2.toLowerCase().trim();
-      
-      // Simple exact match for demo
-      if (a === b) return 100;
-      
-      // Check if the answer contains key parts of the correct answer
-      const keyParts = b.split(' ');
-      let matchCount = 0;
-      
-      keyParts.forEach(part => {
-        if (part.length > 3 && a.includes(part)) {
-          matchCount++;
-        }
-      });
-      
-      const score = Math.min(100, Math.round((matchCount / keyParts.length) * 100));
-      
-      // Add some randomness for demo
-      return Math.max(0, Math.min(100, score + (Math.random() * 20 - 10)));
-    }
-
-    // Display grading results
-    function displayResults() {
-      if (!gradingResults) {
-        resultsContainer.innerHTML = `<p class="info-text">No results available yet.</p>`;
-        return;
+        // Set a timeout to ensure progress completes
+        setTimeout(() => {
+          clearInterval(interval);
+          progressBar.style.width = "100%";
+        }, 10000);
       }
-      
-      let html = `
+
+      // Grade answers using Gemini API
+      async function gradeAnswersWithAI() {
+        const results = [];
+        let totalScore = 0;
+        const promises = [];
+
+        // For each question, evaluate the student's answer using Gemini API
+        for (let i = 0; i < teacherQuestions.length; i++) {
+          const question = teacherQuestions[i];
+          const correctAnswer = teacherAnswers[i]?.text || "";
+
+          // Find the student's answer for this question
+          const studentAnswer = studentAnswers.find(
+            (a) => a.number === question.number
+          );
+          const answer = studentAnswer?.text || "No answer provided";
+
+          // Create prompt for Gemini
+          const prompt = `
+You are an educational grading AI. Grade the student's answer based on accuracy of facts dont focus on creativity of answer also (((the language of the feedback will be similar to language of question and answer))).
+
+Question: "${question.text}"
+Correct answer: "${correctAnswer}"
+Student's answer: "${answer}"
+
+Rate the answer on a scale of 0-100:
+- 90-100: Excellent (fully correct)
+- 70-89: Good (mostly correct with minor issues)
+- 50-69: Acceptable (partially correct)
+- 30-49: Poor (mostly incorrect)
+- 0-29: Very poor (completely incorrect)
+
+IMPORTANT: Return ONLY a valid JSON object as follows:
+{
+  "score": "A number between 0-100",
+  "feedback": "Your feedback here"
+}back
+
+DO NOT include any text before or after the JSON. DO NOT use code blocks, markdown formatting, or backticks.
+`;
+
+          // Create promise for API call
+          const promise = callGeminiAPI(prompt)
+            .then((response) => {
+              try {
+                const result = JSON.parse(response.trim());
+
+                results.push({
+                  questionNumber: question.number,
+                  question: question.text,
+                  studentAnswer: answer,
+                  correctAnswer,
+                  score: result.score,
+                  feedback: result.feedback,
+                });
+
+                totalScore += result.score;
+              } catch (e) {
+                console.error("Error parsing Gemini response:", e, response);
+                results.push({
+                  questionNumber: question.number,
+                  question: question.text,
+                  studentAnswer: answer,
+                  correctAnswer,
+                  score: 0,
+                  feedback: "Error processing this answer. Please try again.",
+                });
+              }
+            })
+            .catch((error) => {
+              console.error("API call failed:", error);
+              results.push({
+                questionNumber: question.number,
+                question: question.text,
+                studentAnswer: answer,
+                correctAnswer,
+                score: 0,
+                feedback: "Error: Unable to grade this answer.",
+              });
+            });
+
+          promises.push(promise);
+        }
+
+        // Wait for all API calls to complete
+        await Promise.all(promises);
+
+        // Sort results by question number
+        results.sort((a, b) => a.questionNumber - b.questionNumber);
+
+        // Calculate overall score
+        const overallScore =
+          results.length > 0 ? totalScore / results.length : 0;
+
+        gradingResults = {
+          results,
+          overallScore,
+          gradedAt: new Date().toLocaleString(),
+        };
+
+        return gradingResults;
+      }
+
+      // Call Gemini API
+      async function callGeminiAPI(prompt) {
+        const generationConfig = {
+          temperature: apiSettings.temperature,
+          topP: 0.95,
+          topK: 64,
+          maxOutputTokens: apiSettings.maxOutputTokens,
+          responseMimeType: "text/plain",
+        };
+
+        const data = {
+          generationConfig,
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: prompt }],
+            },
+          ],
+        };
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemma-3-4b-it:generateContent?key=${apiSettings.apiKey}`;
+
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+              `API request failed with status ${response.status}: ${errorText}`
+            );
+          }
+
+          const result = await response.json();
+
+          if (
+            result.candidates &&
+            result.candidates[0] &&
+            result.candidates[0].content &&
+            result.candidates[0].content.parts &&
+            result.candidates[0].content.parts[0]
+          ) {
+            // Get the text response
+            let responseText = result.candidates[0].content.parts[0].text;
+
+            console.log("Raw response:", responseText); // For debugging
+
+            // Look for JSON pattern within the response
+            const jsonMatch = responseText.match(
+              /\{[\s\S]*"score"[\s\S]*"feedback"[\s\S]*\}/
+            );
+            if (jsonMatch) {
+              return jsonMatch[0];
+            }
+
+            // If no match found, try to clean and parse the entire response
+            // Remove all code block markers, whitespace at start and end
+            responseText = responseText
+              .replace(/```json/g, "")
+              .replace(/```/g, "")
+              .trim();
+
+            // If it starts with a { and ends with a }, it might be JSON
+            if (responseText.startsWith("{") && responseText.endsWith("}")) {
+              return responseText;
+            }
+
+            throw new Error(
+              "Could not extract valid JSON from the API response"
+            );
+          } else {
+            throw new Error("Unexpected API response format");
+          }
+        } catch (error) {
+          console.error("Error calling Gemini API:", error);
+          throw error;
+        }
+      }
+
+      // Display grading results
+      function displayResults() {
+        if (!gradingResults) {
+          resultsContainer.innerHTML = `<p class="info-text">No results available yet.</p>`;
+          return;
+        }
+
+        let html = `
         <div class="result-card">
           <div class="score-details">
             <h3>Overall Score</h3>
             <p>Graded at: ${gradingResults.gradedAt}</p>
           </div>
-          <div class="score ${getScoreClass(gradingResults.overallScore)}">
+          <div classclass="score high-score">
             ${Math.round(gradingResults.overallScore)}
           </div>
         </div>
-        <h3>Individual Question Results</h3>
+        
+        <h3>Individual Questions</h3>
       `;
-      
-      gradingResults.results.forEach(result => {
-        html += `
+
+        gradingResults.results.forEach((result) => {
+          const scoreClass =
+            result.score >= 80
+              ? "high-score"
+              : result.score >= 50
+              ? "medium-score"
+              : "low-score";
+
+          html += `
           <div class="result-card">
             <div class="score-details">
               <h3>Question ${result.questionNumber}</h3>
-              <p>${result.question}</p>
-              <p><strong>Your answer:</strong> ${result.studentAnswer}</p>
-              <p><strong>Correct answer:</strong> ${result.correctAnswer}</p>
-              <p class="feedback">${result.feedback}</p>
+              <p><strong>Question:</strong> ${result.question}</p>
+              <p><strong>Your Answer:</strong> ${result.studentAnswer}</p>
+              <p><strong>Correct Answer:</strong> ${result.correctAnswer}</p>
+              <p><strong>Feedback:</strong> ${result.feedback}</p>
+              
             </div>
-            <div class="score ${getScoreClass(result.score)}">
+            <div class="score ${scoreClass}">
               ${Math.round(result.score)}
             </div>
           </div>
         `;
+        });
+
+        resultsContainer.innerHTML = html;
+      }
+
+      // Clear form inputs
+      clearSetupBtn.addEventListener("click", () => {
+        questionsInput.value = "";
+        answersInput.value = "";
+        teacherQuestions = [];
+        teacherAnswers = [];
+        localStorage.removeItem("teacherQuestions");
+        localStorage.removeItem("teacherAnswers");
+        questionPreview.style.display = "none";
       });
-      
-      resultsContainer.innerHTML = html;
-    }
 
-    // Get CSS class for score color
-    function getScoreClass(score) {
-      if (score >= 80) return 'high-score';
-      if (score >= 50) return 'medium-score';
-      return 'low-score';
-    }
+      clearStudentBtn.addEventListener("click", () => {
+        studentAnswersInput.value = "";
+        studentAnswers = [];
+      });
 
-    // Clear buttons
-    clearSetupBtn.addEventListener('click', () => {
-      questionsInput.value = '';
-      answersInput.value = '';
-      teacherQuestions = [];
-      teacherAnswers = [];
-      questionPreview.style.display = 'none';
-    });
-    
-    clearStudentBtn.addEventListener('click', () => {
-      studentAnswersInput.value = '';
-      studentAnswers = [];
-    });
+      // Load saved questions and answers from localStorage on page load
+      window.addEventListener("DOMContentLoaded", () => {
+        try {
+          if (localStorage.getItem("teacherQuestions")) {
+            teacherQuestions = JSON.parse(
+              localStorage.getItem("teacherQuestions")
+            );
+          }
 
-    // Initial display
-    displayQuestionsForStudents();
-  </script>
-</body>
+          if (localStorage.getItem("teacherAnswers")) {
+            teacherAnswers = JSON.parse(localStorage.getItem("teacherAnswers"));
+          }
+
+          // Display saved questions
+          if (teacherQuestions.length > 0 && teacherAnswers.length > 0) {
+            // Reconstruct the input fields
+            let questionsText = "";
+            let answersText = "";
+
+            teacherQuestions.forEach((q) => {
+              questionsText += `${q.number}. ${q.text}\n`;
+            });
+
+            teacherAnswers.forEach((a) => {
+              answersText += `${a.number}. ${a.text}\n`;
+            });
+
+            questionsInput.value = questionsText.trim();
+            answersInput.value = answersText.trim();
+
+            // Display questions for students
+            displayQuestionsForStudents();
+
+            // Show preview
+            displayQuestionPreview();
+          }
+        } catch (e) {
+          console.error("Error loading saved data:", e);
+        }
+      });
+    </script>
+  </body>
 </html>
